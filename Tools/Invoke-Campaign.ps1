@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][ValidateSet('setup','3d','tests','play','stop','state','view','scenario','journey','traversal','branches','capture','build')][string]$Action,[string]$Argument='', [int]$TimeoutSeconds=50)
+param([Parameter(Mandatory=$true)][ValidateSet('setup','characters','refresh','3d','tests','play','stop','state','view','scenario','journey','traversal','branches','capture','build')][string]$Action,[string]$Argument='', [int]$TimeoutSeconds=50)
 $ErrorActionPreference='Stop'
 $id=[guid]::NewGuid().ToString()
 $command=@{id=$id;action=$Action;argument=$Argument}|ConvertTo-Json -Compress

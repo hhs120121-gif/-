@@ -7,7 +7,7 @@ namespace SecretVirus.Editor
     {
         void OnPreprocessTexture()
         {
-            if(assetPath!="Assets/Game/Resources/TitleIllustration.png")return;
+            if(assetPath!="Assets/Game/Resources/TitleIllustration.png"&&assetPath!="Assets/Game/Resources/CharacterFaceAtlas.png")return;
             var texture=(TextureImporter)assetImporter;
             texture.textureType=TextureImporterType.Default;texture.sRGBTexture=true;
             texture.mipmapEnabled=false;texture.npotScale=TextureImporterNPOTScale.None;

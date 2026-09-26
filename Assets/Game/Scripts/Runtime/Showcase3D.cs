@@ -27,7 +27,7 @@ namespace SecretVirus
           for(int id=0;id<6;id++){
             var actor=Model3D.Character(id,transform,new Vector3(220,0,0));Model3D.Layer(actor,29);
             var obj=new GameObject("Portrait capture");var cam=obj.AddComponent<Camera>();cam.cullingMask=1<<29;cam.clearFlags=CameraClearFlags.SolidColor;cam.backgroundColor=new Color(.10f,.17f,.20f,1);cam.fieldOfView=31;cam.nearClipPlane=.1f;cam.farClipPlane=10;
-            cam.transform.position=new Vector3(220,1.65f,-2.55f);cam.transform.LookAt(new Vector3(220,1.46f,0));
+            cam.transform.position=id<3?new Vector3(220,2.12f,-1.9f):new Vector3(220,1.65f,-2.55f);cam.transform.LookAt(id<3?new Vector3(220,1.99f,0):new Vector3(220,1.46f,0));
             var rt=new RenderTexture(256,320,24){antiAliasing=1,filterMode=FilterMode.Bilinear,name="3D portrait "+id};rt.Create();cam.targetTexture=rt;cam.enabled=false;
             yield return null;
             cam.Render();var previous=RenderTexture.active;RenderTexture.active=rt;

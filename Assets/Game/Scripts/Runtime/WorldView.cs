@@ -111,7 +111,7 @@ namespace SecretVirus
         {
             if(root==null)return;ChangeHero();player.position=Ground(position);Quaternion turn=Quaternion.LookRotation(new Vector3(-facing.x,0,-facing.y));player.rotation=Quaternion.Slerp(player.rotation,turn,dt<=0?1:1-Mathf.Exp(-dt*16));motion.Pose(stepClock*1.6f,moving,abilityTime);abilityTime=Mathf.Max(0,abilityTime-dt);
             Vector2 focus=fixedCamera?fixedPoint:position;Vector2 desired=new Vector2(Mathf.Clamp(focus.x,6,24),Mathf.Clamp(focus.y,4,13));cameraPosition=dt<=0?desired:Vector2.Lerp(cameraPosition,desired,1-Mathf.Exp(-dt*8));
-            Vector3 look=Ground(cameraPosition)+Vector3.up*.6f;sceneCamera.transform.position=look+new Vector3(0,12,-10);sceneCamera.transform.LookAt(look);
+            Vector3 look=Ground(cameraPosition)+Vector3.up*.85f;sceneCamera.transform.position=look+new Vector3(0,7.8f,-7.3f);sceneCamera.transform.LookAt(look);
             foreach(var t in things){
                 if(t.id=="guard"&&!state.Has("guard_done")){float x=17+Mathf.Sin(simulationTime*.5f)*3;t.position=new Vector2(x,10);t.obstacle=new Rect(x-.5f,9.76f,1,.48f);t.renderer.transform.position=Ground(t.position);t.renderer.transform.rotation=Quaternion.Euler(0,Mathf.Cos(simulationTime*.5f)>0?-90:90,0);}
                 bool hide=state.Has("collected_"+t.id)||(t.id=="a_rubble"&&state.Has("a_clear"))||(t.id=="cell_rubble"&&state.Has("cell_clear"))||(t.id=="rescue"&&state.Has("rescued"));t.renderer.enabled=!hide;

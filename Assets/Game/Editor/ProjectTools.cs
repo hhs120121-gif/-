@@ -27,6 +27,8 @@ namespace SecretVirus.Editor
             try{
                 switch(command.action){
                     case "setup":Setup();Reply("ok","Scene and build settings configured.");break;
+                    case "refresh":Reply("ok","Asset refresh requested.");AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);break;
+                    case "characters":if(VirusGame.Instance==null)throw new Exception("Enter Play Mode first.");VirusGame.Instance.ReviewCharacters();Reply("ok","Character review captures scheduled.");break;
                     case "tests":Reply("ok",RulesChecks.Run());break;
                     case "3d":if(VirusGame.Instance==null)throw new Exception("Enter Play Mode first.");Reply("ok",VirusGame.Instance.Verify3D());break;
                     case "play":EditorApplication.isPlaying=true;Reply("ok","Play requested.");break;
