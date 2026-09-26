@@ -1,0 +1,1 @@
+Verified through native Unity window input: Enter starts New Game; Escape skips opening; Enter advances wake dialogue; arrow keys moved position from (5.00,11.00) to (7.28,10.54); Z selected the facing request desk and advanced tutorial from state 2 to 3. This is a focused input smoke check, not a full human playthrough.
