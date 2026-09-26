@@ -1,0 +1,14 @@
+{
+  "hero": "Daniel",
+  "meshObjects": 8,
+  "bones": 20,
+  "vertices": 114527,
+  "source": "Daniel.blend",
+  "model": "Daniel.fbx",
+  "shapeKeys": [
+    "Concern",
+    "Resolve",
+    "Smile",
+    "Blink"
+  ]
+}

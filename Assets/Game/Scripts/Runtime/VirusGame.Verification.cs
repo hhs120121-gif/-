@@ -16,7 +16,8 @@ namespace SecretVirus
             if(name=="new"){NewGame();return;}
             State=new GameState{tutorial=5,joined=3,stage=8,highestStage=14,hp=100};foreach(var key in Catalog.Clues.Keys)State.Clue(key);State.Fragment("A");State.Fragment("B");State.Record("guard",Resolution.Persuaded);
             foreach(string item in Catalog.Items.Keys)Inventory.Add(State,item,6);
-            if(name=="field"||name=="tutorial"){State.stage=1;State.joined=1;State.tutorial=3;State.x=13;State.y=9;World.Build(State);SetMode(GameMode.Field);}
+            if(name.StartsWith("environment-")){State.stage=int.Parse(name.Substring(12));State.x=13;State.y=8;World.Build(State);SetMode(GameMode.Field);}
+            else if(name=="field"||name=="tutorial"){State.stage=1;State.joined=1;State.tutorial=3;State.x=13;State.y=9;World.Build(State);SetMode(GameMode.Field);}
             else if(name=="craft"){State.stage=1;State.tutorial=4;World.Build(State);chosenRecipe=Catalog.Repair;OpenCraft();}
             else if(name=="battle"){State.stage=14;World.Build(State);StartBattle("boss");}
             else if(name=="inventory"){World.Build(State);inventoryTab=2;SetMode(GameMode.Inventory);}

@@ -1,0 +1,14 @@
+{
+  "hero": "Daeun",
+  "meshObjects": 8,
+  "bones": 20,
+  "vertices": 158127,
+  "source": "Daeun.blend",
+  "model": "Daeun.fbx",
+  "shapeKeys": [
+    "Concern",
+    "Resolve",
+    "Smile",
+    "Blink"
+  ]
+}

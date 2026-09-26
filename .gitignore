@@ -12,5 +12,7 @@
 /Tools/result.json
 /Tools/last-command.txt
 /Tools/player-smoke.log
+/Tools/Blender/
+*.blend1
 /Tools/verification-*.png
 /Tools/verification-*.json

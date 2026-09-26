@@ -45,6 +45,10 @@ namespace SecretVirus
             bool world3D=!World.sceneCamera.orthographic&&World.root.GetComponentsInChildren<MeshRenderer>().Length>100&&World.root.GetComponentsInChildren<SpriteRenderer>().Length==0;
             var worldMaterial=Resources.Load<Material>("World3DMaterial");if(worldMaterial==null||!worldMaterial.shader.isSupported)errors.Add("3D material shader missing or unsupported.");
             var characterShader=Resources.Load<Shader>("IllustratedCharacter");if(characterShader==null||!characterShader.isSupported||Resources.Load<Texture2D>("CharacterFaceAtlas")==null)errors.Add("Illustrated character shader or face atlas missing/unsupported.");
+            foreach(string character in new[]{"Daeun","James","Daniel"}){var model=Resources.Load<GameObject>("Characters/"+character);if(model==null||model.GetComponentsInChildren<SkinnedMeshRenderer>().Length<8)errors.Add("Authored character missing: "+character);}
+            if(Resources.Load<Texture2D>("CharacterMaterialAtlas")==null)errors.Add("Character material atlas missing.");
+            foreach(string shaderName in new[]{"EnvironmentSurface","EnvironmentGlass"}){var shader=Resources.Load<Shader>(shaderName);if(shader==null||!shader.isSupported)errors.Add("Environment shader missing/unsupported: "+shaderName);}
+            foreach(string prop in new[]{"desk","bench","bed","shelf","crate","terminal","machine","door","lamp","vent","notice","vial","plant","rubble","BeveledUnit"})if(Resources.Load<GameObject>("Environment/"+prop)==null)errors.Add("Environment model missing: "+prop);
             var report=new SmokeReport{status=errors.Count==0&&captured==6&&loaded&&listener&&world3D?"PASS":"FAIL",unityVersion=Application.unityVersion,captured=captured,errors=errors.ToArray(),fontLoaded=loaded,audioListener=listener};
             File.WriteAllText(Path.Combine(directory,"runtime-report.json"),JsonUtility.ToJson(report,true));Application.logMessageReceived-=collect;Debug.Log("RUNTIME SMOKE "+report.status);Application.Quit(report.status=="PASS"?0:1);
         }

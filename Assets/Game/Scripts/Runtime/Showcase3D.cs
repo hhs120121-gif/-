@@ -44,9 +44,9 @@ namespace SecretVirus
             if(mode!=next||enemyId!=id||hero!=leader){
                 mode=next;enemyId=id;hero=leader;if(cast!=null){cast.gameObject.SetActive(false);Destroy(cast.gameObject);}cast=Model3D.Group("Cast",scene,Vector3.zero);
                 if(next==GameMode.Battle&&battle!=null){
-                    party=Model3D.Character(leader,cast,new Vector3(-2,0,-.4f));party.localRotation=Quaternion.Euler(0,-100,0);
+                    party=Model3D.Character(leader,cast,new Vector3(-.9f,0,-.4f));party.localRotation=Quaternion.Euler(0,-55,0);
                     enemy=battle.enemy.machine?Model3D.Prop("machine",cast,new Vector3(.5f,0,1)):Model3D.Character(battle.enemy.boss?3:battle.enemy.id=="c"?5:4,cast,new Vector3(.5f,0,1));enemy.localRotation=Quaternion.Euler(0,18,0);
-                    camera3D.transform.position=scene.position+new Vector3(0,3.6f,-8.3f);camera3D.transform.LookAt(scene.position+new Vector3(0,1.1f,0));
+                    camera3D.transform.position=scene.position+new Vector3(0,3.6f,-8.3f);camera3D.transform.LookAt(scene.position+new Vector3(0,.5f,0));
                 }else{
                     Model3D.Character(1,cast,new Vector3(2.0f,0,1.1f));Model3D.Character(0,cast,new Vector3(3.4f,0,0));Model3D.Character(2,cast,new Vector3(4.9f,0,1.2f));
                     Model3D.Prop("machine",cast,new Vector3(6.7f,0,3));Model3D.Prop("terminal",cast,new Vector3(1,0,3));
@@ -59,7 +59,7 @@ namespace SecretVirus
                 float t=Time.unscaledTime-actionStart;
                 float lunge=t>=0&&t<.5f?Mathf.Sin(t/.5f*Mathf.PI):0;
                 bool physical=actionType==BattleAction.Attack||actionType==BattleAction.Subdue;
-                party.localPosition=new Vector3(-2+(physical?lunge*.42f:0),0,-.4f);
+                party.localPosition=new Vector3(-.9f+(physical?lunge*.30f:0),0,-.4f);
                 if(t>=0&&t<.5f)party.GetComponent<CharacterMotion3D>().Pose(t*12,false,1);
                 float recoil=t>=.6f&&t<1.05f?Mathf.Sin((t-.6f)/.45f*Mathf.PI)*.12f:0;
                 enemy.localPosition=new Vector3(.5f-recoil,0,1-recoil);party.localPosition+=Vector3.left*recoil;

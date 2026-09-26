@@ -1,1 +1,1 @@
-PASS perspective camera / 1280x720 antialiased rendering / 14 mesh-only maps (minimum 317 mesh renderers) / all 94 object colliders / 42 hero placements / camera-relative input axes / nonblank 3D portrait
+PASS perspective camera / 1920x1080 antialiased rendering / 14 mesh-only maps (minimum 197 mesh renderers) / all 94 object colliders / 42 hero placements / camera-relative input axes / nonblank 3D portrait

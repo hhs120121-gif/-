@@ -13,7 +13,7 @@ namespace SecretVirus
     public class WorldThing
     {
         public string id,label,type;public Vector2 position;public WorldVisual renderer;public Rect obstacle;public bool solid=true;
-        public WorldThing(string id,string label,string type,float x,float y){this.id=id;this.label=label;this.type=type;position=new Vector2(x,y);float depth=type=="bed"?.9f:type=="person"?.24f:.36f;obstacle=new Rect(x-.65f,y-depth,1.3f,depth*2);}
+        public WorldThing(string id,string label,string type,float x,float y){this.id=id;this.label=label;this.type=type;position=new Vector2(x,y);float depth=type=="bed"?1.25f:type=="person"?.24f:type=="bench"||type=="desk"?.44f:type=="terminal"?.45f:.36f;float width=type=="bed"?1.45f:type=="bench"?1.95f:type=="desk"?1.6f:type=="shelf"?1.5f:type=="door"?1.5f:1.3f;obstacle=new Rect(x-width/2,y-depth,width,depth*2);}
     }
     public class WorldView:MonoBehaviour
     {
@@ -22,16 +22,16 @@ namespace SecretVirus
         public readonly List<WorldThing> things=new List<WorldThing>();public readonly List<Rect> walls=new List<Rect>();
         public Vector2 position=new Vector2(5,11),facing=Vector2.down,cameraPosition;public bool moving,running,guardTriggered;public int direction,frame;
         public float stepClock,alert,simulationTime;float footstepTimer,abilityTime;int displayedHero=-1;public GameState state;public Action Step;
-        CharacterMotion3D motion;Transform vision;Showcase3D showcase;
+        CharacterMotion3D motion;Transform vision;Showcase3D showcase;EnvironmentPresentation environment;float conversationCamera;
         public static Vector3 Ground(Vector2 p)=>new Vector3(p.x,0,p.y);
         public void Initialize()
         {
-            var go=new GameObject("Perspective exploration camera");go.transform.SetParent(transform);go.AddComponent<AudioListener>();sceneCamera=go.AddComponent<Camera>();sceneCamera.orthographic=false;sceneCamera.fieldOfView=46;sceneCamera.nearClipPlane=.1f;sceneCamera.farClipPlane=100;
-            sceneCamera.clearFlags=CameraClearFlags.SolidColor;sceneCamera.backgroundColor=PixelArt.C("#15232D");sceneCamera.cullingMask=~((1<<28)|(1<<29));sceneCamera.allowHDR=true;
-            target=new RenderTexture(1280,720,24,RenderTextureFormat.ARGB32){antiAliasing=4,filterMode=FilterMode.Bilinear,name="3D exploration 1280x720"};target.Create();sceneCamera.targetTexture=target;
+            var go=new GameObject("Perspective exploration camera");go.transform.SetParent(transform);go.AddComponent<AudioListener>();sceneCamera=go.AddComponent<Camera>();sceneCamera.orthographic=false;sceneCamera.fieldOfView=42;sceneCamera.nearClipPlane=.1f;sceneCamera.farClipPlane=100;
+            sceneCamera.clearFlags=CameraClearFlags.SolidColor;sceneCamera.backgroundColor=PixelArt.C("#74888F");sceneCamera.cullingMask=~((1<<28)|(1<<29)|(1<<30));sceneCamera.allowHDR=true;
+            target=new RenderTexture(1920,1080,24,RenderTextureFormat.ARGB32){antiAliasing=4,filterMode=FilterMode.Bilinear,name="3D exploration 1920x1080"};target.Create();sceneCamera.targetTexture=target;
             var displayObject=new GameObject("Display camera");displayObject.transform.SetParent(transform);var display=displayObject.AddComponent<Camera>();display.cullingMask=0;display.clearFlags=CameraClearFlags.SolidColor;display.backgroundColor=Color.black;display.depth=1;
             RenderSettings.ambientMode=AmbientMode.Trilight;RenderSettings.ambientSkyColor=PixelArt.C("#889EA9");RenderSettings.ambientEquatorColor=PixelArt.C("#52636C");RenderSettings.ambientGroundColor=PixelArt.C("#30383D");
-            var sun=Model3D.Group("Soft key light",transform,Vector3.zero);sun.rotation=Quaternion.Euler(48,-32,0);var light=sun.gameObject.AddComponent<Light>();light.type=LightType.Directional;light.color=PixelArt.C("#FFE3BA");light.intensity=1.05f;light.shadows=LightShadows.Soft;light.shadowStrength=.72f;light.shadowBias=.04f;
+            var sun=Model3D.Group("Soft key light",transform,Vector3.zero);sun.rotation=Quaternion.Euler(48,-32,0);var light=sun.gameObject.AddComponent<Light>();light.type=LightType.Directional;light.color=PixelArt.C("#FFE3C7");light.intensity=.85f;light.shadows=LightShadows.Soft;light.shadowStrength=.58f;light.shadowBias=.025f;
             QualitySettings.shadows=ShadowQuality.All;QualitySettings.shadowResolution=ShadowResolution.High;QualitySettings.shadowDistance=45;QualitySettings.pixelLightCount=6;
             showcase=gameObject.AddComponent<Showcase3D>();showcase.Initialize();
         }
@@ -39,7 +39,7 @@ namespace SecretVirus
         {
             state=s;if(root!=null){root.gameObject.SetActive(false);Destroy(root.gameObject);}root=Model3D.Group("Stage "+s.stage+" 3D",transform,Vector3.zero);things.Clear();walls.Clear();guardTriggered=false;alert=0;displayedHero=-1;
             Architecture(s.stage);
-            if(s.stage==1){Add("bed","간이침대","bed",4,13);Add("request","오늘의 의뢰서","desk",8,10);Add("shelf","부품 선반","shelf",24,13);Add("parts","공구 부품 ×2","crate",19,12);Add("wire","전선 ×2","crate",22,10);Add("scrap","고철 ×2","crate",26,9);Add("chip","전자 부품 ×1","crate",20,8);Add("cloth","천 ×1","crate",24,6);Add("craft","제작대","bench",14,3);Add("radio","오래된 라디오","terminal",4,7);Add("memento","덧댄 작업복","notice",5,4);Decor("lamp",3,12);Decor("rubble",9,3);}
+            if(s.stage==1){Add("bed","간이침대","bed",4,13);Add("request","오늘의 의뢰서","desk",8,10);Add("shelf","부품 선반","shelf",24,13);Add("parts","공구 부품 ×2","crate",19,12);Add("wire","전선 ×2","crate",22,10);Add("scrap","고철 ×2","crate",26,9);Add("chip","전자 부품 ×1","crate",20,8);Add("cloth","천 ×1","crate",24,6);Add("craft","제작대","bench",14,10.5f);Add("radio","오래된 라디오","terminal",4,7);Add("memento","덧댄 작업복","notice",5,4);Decor("lamp",3,12);Decor("rubble",9,3);Decor("shelf",20,14.7f);Decor("shelf",27,14.7f);}
             else if(s.stage==2){Add("sibling","동생","bed",7,12);Add("medicine","약 봉투","desk",12,12);Add("toy","고장 난 작은 조명","lamp",6,7);Decor("plant",3,13);Decor("shelf",23,12);Add("memory","오래된 사진","notice",18,7);}
             else if(s.stage==3){AddPerson("james","제임스",1,11,10);Add("supply","공급 기록","notice",22,13);Add("dispenser","고장 난 배급 설비","machine",23,7);Add("cache3","비상 구급함","crate",6,6);Decor("shelf",6,13);Decor("desk",15,4);}
             else if(s.stage==4){AddPerson("daniel","다니엘",2,8,9);Add("rescue","갇힌 주민과 잔해","rubble",15,10);Add("jump","무너진 연결 통로","vent",23,10);Add("cache4","구조 물품","crate",24,13);for(int i=0;i<4;i++)Decor("rubble",5+i*5,5);}
@@ -57,30 +57,12 @@ namespace SecretVirus
             if(s.stage>2 && s.stage<14)Add("back","이전 구역","door",2,3);
             ChangeHero();position=new Vector2(s.x,s.y);if(Blocked(position))position=new Vector2(5,8);cameraPosition=position;UpdateView(0,false,Vector2.zero);
         }
-        void Architecture(int stage)
-        {
-            string floor=stage<=3?"#625F50":stage==4?"#65716B":stage>=12?"#425D66":"#52656A";
-            string wall=stage<=3?"#859084":"#70888C";
-            Model3D.Box(root,"Foundation",15,-.23f,9,30,.4f,18,"#26383D");
-            for(int x=0;x<30;x+=2)for(int z=0;z<18;z+=2)Model3D.Box(root,"Floor slab",x+1,-.04f,z+1,1.985f,.12f,1.985f,floor);
-            for(int z=0;z<18;z++)for(int x=0;x<30;x++)if(z>=16||x==0||x==29||z==0)walls.Add(new Rect(x,z,1,1));
-            Model3D.Box(root,"Back wall",15,1.7f,16.5f,30,3.4f,1,wall);Model3D.Box(root,"Back wall skirting",15,.28f,15.95f,30,.55f,.14f,"#324A52");
-            // Cutaway side walls retain depth without obscuring the player.
-            Model3D.Box(root,"Left cutaway",.5f,.35f,8.5f,1,.7f,17,wall);Model3D.Box(root,"Right cutaway",29.5f,.35f,8.5f,1,.7f,17,wall);Model3D.Box(root,"Front curb",15,.12f,.5f,30,.24f,1,"#344A51");
-            for(int x=3;x<29;x+=5){
-                Model3D.Box(root,"Wall pilaster",x,1.7f,15.85f,.22f,3.4f,.27f,"#4C656C");
-                Model3D.Box(root,"Wall light",x+1.8f,2.8f,15.85f,1.45f,.11f,.17f,stage<4?"#FFE4AF":"#AAE4DC",true);
-                Model3D.PointLight(root,new Vector3(x+1.8f,2.7f,14.5f),stage<4?"#FFD19A":"#97D8D8",2.1f,7);
-                if(stage<4){Model3D.Box(root,"Window recess",x+1.8f,1.9f,15.94f,1.50f,1.12f,.09f,"#263E4D");for(int i=-1;i<=1;i++)Model3D.Box(root,"Window mullion",x+1.8f+i*.48f,1.9f,15.82f,.05f,1.12f,.06f,"#B5BCAE");}
-            }
-            if(stage<=3){Model3D.Box(root,"Woven living rug",5.5f,.035f,11.8f,4.5f,.015f,3.5f,"#897759");for(int i=-2;i<=2;i++)Model3D.Box(root,"Rug stripe",5.5f+i*.7f,.048f,11.8f,.06f,.006f,3.3f,"#AD9972");}
-            else {for(int side=-1;side<=1;side+=2)Model3D.Box(root,"Walkway border",15,.035f,8+side*1.05f,27,.025f,.055f,"#B7A571");for(int x=3;x<28;x+=4)Model3D.Box(root,"Direction marker",x,.035f,8,.50f,.025f,.12f,"#839997");}
-            for(int x=3;x<28;x+=6){var pipe=Model3D.Part(root,"Conduit",PrimitiveType.Cylinder,new Vector3(x,2.9f,15.65f),new Vector3(.09f,3,.09f),"#A09D87");pipe.localRotation=Quaternion.Euler(0,0,90);}
-        }
+        void Architecture(int stage){environment=Environment3D.Build(this,stage);}
         public WorldThing Add(string id,string label,string type,float x,float y)
         {
             var t=new WorldThing(id,label,type,x,y);t.renderer=new WorldVisual(Model3D.Prop(type,root,new Vector3(x,0,y),id.StartsWith("sample")?int.Parse(id.Substring(6)):0));
-            var collider=t.renderer.transform.gameObject.AddComponent<BoxCollider>();collider.center=new Vector3(0,.65f,0);collider.size=new Vector3(t.obstacle.width,1.3f,t.obstacle.height);things.Add(t);return t;
+            float height=type=="door"?2.9f:type=="shelf"?2.45f:type=="machine"||type=="bench"?2.25f:type=="terminal"?2:type=="bed"?1.05f:1.3f;
+            var collider=t.renderer.transform.gameObject.AddComponent<BoxCollider>();collider.center=new Vector3(0,height/2,0);collider.size=new Vector3(t.obstacle.width,height,t.obstacle.height);things.Add(t);if(height>1.8f&&environment!=null)environment.Track(t.renderer.transform);return t;
         }
         void AddPerson(string id,string label,int hero,float x,float y)
         {
@@ -101,7 +83,7 @@ namespace SecretVirus
             simulationTime+=delta;
             // Preserves the supplied PlayerController's normalized 5 / 8 movement and cardinal facing.
             input=Vector2.ClampMagnitude(input,1);moving=input.sqrMagnitude>.001f;running=run;
-            if(moving){facing=Mathf.Abs(input.x)>Mathf.Abs(input.y)?new Vector2(Mathf.Sign(input.x),0):new Vector2(0,Mathf.Sign(input.y));direction=facing.y<0?0:facing.y>0?1:facing.x<0?2:3;}
+            if(moving){facing=input.normalized;direction=facing.y<0?0:facing.y>0?1:facing.x<0?2:3;}
             Vector2 offset=input*(run?8:5)*Mathf.Min(delta,.05f);int steps=Mathf.Max(1,Mathf.CeilToInt(offset.magnitude/.12f));offset/=steps;
             for(int i=0;i<steps;i++){var next=position+new Vector2(offset.x,0);if(!Blocked(next))position=next;next=position+new Vector2(0,offset.y);if(!Blocked(next))position=next;}
             if(moving){stepClock+=delta*(run?11:7);footstepTimer+=delta;if(footstepTimer>(run?.21f:.34f)){footstepTimer=0;Step?.Invoke();}}
@@ -110,8 +92,11 @@ namespace SecretVirus
         public void UpdateView(float dt,bool fixedCamera,Vector2 fixedPoint)
         {
             if(root==null)return;ChangeHero();player.position=Ground(position);Quaternion turn=Quaternion.LookRotation(new Vector3(-facing.x,0,-facing.y));player.rotation=Quaternion.Slerp(player.rotation,turn,dt<=0?1:1-Mathf.Exp(-dt*16));motion.Pose(stepClock*1.6f,moving,abilityTime);abilityTime=Mathf.Max(0,abilityTime-dt);
-            Vector2 focus=fixedCamera?fixedPoint:position;Vector2 desired=new Vector2(Mathf.Clamp(focus.x,6,24),Mathf.Clamp(focus.y,4,13));cameraPosition=dt<=0?desired:Vector2.Lerp(cameraPosition,desired,1-Mathf.Exp(-dt*8));
-            Vector3 look=Ground(cameraPosition)+Vector3.up*.85f;sceneCamera.transform.position=look+new Vector3(0,7.8f,-7.3f);sceneCamera.transform.LookAt(look);
+            Vector2 focus=fixedCamera?fixedPoint:position+(moving?facing*.65f:Vector2.zero);Vector2 desired=new Vector2(Mathf.Clamp(focus.x,4.8f,25.2f),Mathf.Clamp(focus.y,3,13.8f));cameraPosition=dt<=0?desired:Vector2.Lerp(cameraPosition,desired,1-Mathf.Exp(-dt*5));
+            bool dialogue=VirusGame.Instance!=null&&VirusGame.Instance.Mode==GameMode.Dialogue;
+            conversationCamera=dt<=0?(dialogue?1:0):Mathf.MoveTowards(conversationCamera,dialogue?1:0,dt*2.5f);
+            Vector3 look=Ground(cameraPosition)+Vector3.up*Mathf.Lerp(.85f,.65f,conversationCamera);sceneCamera.transform.position=look+Vector3.Lerp(new Vector3(2.8f,5.5f,-8.2f),new Vector3(2.1f,4.6f,-7.0f),conversationCamera);sceneCamera.transform.LookAt(look);
+            if(environment!=null)environment.Present(sceneCamera,player.position,dt);
             foreach(var t in things){
                 if(t.id=="guard"&&!state.Has("guard_done")){float x=17+Mathf.Sin(simulationTime*.5f)*3;t.position=new Vector2(x,10);t.obstacle=new Rect(x-.5f,9.76f,1,.48f);t.renderer.transform.position=Ground(t.position);t.renderer.transform.rotation=Quaternion.Euler(0,Mathf.Cos(simulationTime*.5f)>0?-90:90,0);}
                 bool hide=state.Has("collected_"+t.id)||(t.id=="a_rubble"&&state.Has("a_clear"))||(t.id=="cell_rubble"&&state.Has("cell_clear"))||(t.id=="rescue"&&state.Has("rescued"));t.renderer.enabled=!hide;

@@ -47,7 +47,20 @@ namespace SecretVirus
             if(enabled&&GUI.Button(rect,GUIContent.none,GUIStyle.none)){menuFocus=index;sound.Play("tick");pendingAction=action;}
         }
         void Icon(Rect r,string id,float alpha=1){Color old=GUI.color;GUI.color=new Color(1,1,1,alpha);GUI.DrawTexture(r,PixelArt.Icon(id),ScaleMode.ScaleToFit);GUI.color=old;}
-        void Portrait(Rect r,int hero,int mood=0){GUI.DrawTexture(r,World.Portrait(hero),ScaleMode.ScaleToFit);}
+        void Portrait(Rect r,int hero,int mood=0)
+        {
+            if(titleIllustration==null)titleIllustration=Resources.Load<Texture2D>("TitleIllustration");
+            if(hero>=0&&hero<3&&titleIllustration!=null){
+                // Pixel bounds in the original 1672 x 941 illustration, measured from its top left.
+                Rect crop=hero==0?new Rect(953,142,300,360):hero==1?new Rect(752,118,230,276):new Rect(1248,4,260,312);
+                float width=Mathf.Min(r.width,r.height*crop.width/crop.height),height=width*crop.height/crop.width;
+                Rect frame=new Rect(r.center.x-width*.5f,r.center.y-height*.5f,width,height);
+                GUI.DrawTextureWithTexCoords(frame,titleIllustration,new Rect(crop.x/1672f,1-(crop.y+crop.height)/941f,crop.width/1672f,crop.height/941f));
+                Border(frame,line);
+                return;
+            }
+            GUI.DrawTexture(r,World.Portrait(hero),ScaleMode.ScaleToFit);
+        }
         void Bar(Rect r,float fraction,Color color,string label)
         {
             Fill(r,PixelArt.C("#10212A"));Fill(new Rect(r.x,r.y,r.width*Mathf.Clamp01(fraction),r.height),color);Border(r,line);Text(new Rect(r.x+9,r.y-1,r.width-18,r.height+1),label,14,paper,TextAnchor.MiddleLeft);

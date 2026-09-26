@@ -72,7 +72,8 @@ namespace SecretVirus
             if(Input.GetKeyDown(KeyCode.Escape)){returnMode=Mode;SetMode(GameMode.Menu);return;}
             if(Input.GetKeyDown((KeyCode)Settings.inventory)||Input.GetKeyDown(KeyCode.Tab)){SetMode(GameMode.Inventory);return;}
             SwitchInput();Vector2 move=new Vector2((Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.LeftArrow)?1:0),(Input.GetKey(KeyCode.UpArrow)?1:0)-(Input.GetKey(KeyCode.DownArrow)?1:0));
-            bool running=Input.GetKey((KeyCode)Settings.cancel)||Input.GetKey(KeyCode.LeftShift)||Input.GetKey(KeyCode.RightShift);World.Move(move,running,dt);
+            Vector3 right=World.sceneCamera.transform.right,forward=World.sceneCamera.transform.forward;right.y=0;forward.y=0;Vector3 planar=right.normalized*move.x+forward.normalized*move.y;
+            bool running=Input.GetKey((KeyCode)Settings.cancel)||Input.GetKey(KeyCode.LeftShift)||Input.GetKey(KeyCode.RightShift);World.Move(new Vector2(planar.x,planar.z),running,dt);
             if(move.sqrMagnitude>0)idleTime=0;else idleTime+=dt;
             if(ConfirmDown())interactionBuffer=Time.unscaledTime+.15f;
             if(!World.moving&&interactionBuffer>=Time.unscaledTime){interactionBuffer=-1;var target=World.Nearest();if(target!=null){idleTime=0;Interact(target.id);}else Toast("물건 가까이에서 바라본 뒤 조사하세요.");}

@@ -30,7 +30,7 @@ namespace SecretVirus
         {return Part(t,n,PrimitiveType.Cylinder,new Vector3(x,y,z),new Vector3(w,h/2,w),c);}
         public static Transform Character(int hero,Transform parent,Vector3 position)
         {
-            if(hero>=0&&hero<3)return IllustratedCharacters.Create(hero,parent,position);
+            if(hero>=0&&hero<3)return AuthoredCharacters.Create(hero,parent,position);
             var root=Group("Character "+hero,parent,position);
             string skin=hero==0?"#BD9477":hero==1?"#E8C5AA":hero==2?"#CC987A":"#C8B19D";
             string hair=hero==0?"#3A2926":hero==1?"#DAB85D":hero==2?"#A74929":hero==3?"#98A5AA":"#333947";
@@ -74,6 +74,7 @@ namespace SecretVirus
         }
         public static Transform Prop(string type,Transform parent,Vector3 position,int variant=0)
         {
+            var authored=Environment3D.Prop(type,parent,position,variant);if(authored!=null)return authored;
             var t=Group(type,parent,position);string metal="#52656B",dark="#26383F",wood="#887252",light="#B4BAB0";
             switch(type){
                 case "bed":
@@ -115,9 +116,11 @@ namespace SecretVirus
     public class CharacterMotion3D:MonoBehaviour
     {
         public float stride,gesture;public bool walking;Transform leftLeg,rightLeg,leftArm,rightArm,body,leftKnee,rightKnee,leftElbow,rightElbow;
-        void Awake(){body=transform.Find("Body");leftLeg=body.Find("Left leg");rightLeg=body.Find("Right leg");leftArm=body.Find("Left arm");rightArm=body.Find("Right arm");leftKnee=leftLeg.Find("Knee");rightKnee=rightLeg.Find("Knee");leftElbow=leftArm.Find("Elbow");rightElbow=rightArm.Find("Elbow");}
+        AuthoredCharacterPose authored;
+        void Awake(){authored=GetComponent<AuthoredCharacterPose>();if(authored!=null)return;body=transform.Find("Body");leftLeg=body.Find("Left leg");rightLeg=body.Find("Right leg");leftArm=body.Find("Left arm");rightArm=body.Find("Right arm");leftKnee=leftLeg.Find("Knee");rightKnee=rightLeg.Find("Knee");leftElbow=leftArm.Find("Elbow");rightElbow=rightArm.Find("Elbow");}
         public void Pose(float time,bool move,float ability=0)
         {
+            if(authored!=null){authored.Pose(time,move,ability);return;}
             float swing=move?Mathf.Sin(time)*28:0;leftLeg.localRotation=Quaternion.Euler(swing,0,0);rightLeg.localRotation=Quaternion.Euler(-swing,0,0);
             leftArm.localRotation=Quaternion.Euler(-swing*.7f,0,0);rightArm.localRotation=Quaternion.Euler(ability>0?-65+Mathf.Sin(time*2)*15:swing*.7f,0,0);
             if(leftKnee!=null){leftKnee.localRotation=Quaternion.Euler(move?-Mathf.Max(0,-Mathf.Sin(time))*42:0,0,0);rightKnee.localRotation=Quaternion.Euler(move?-Mathf.Max(0,Mathf.Sin(time))*42:0,0,0);leftArm.localRotation*=Quaternion.Euler(0,0,-7);rightArm.localRotation*=Quaternion.Euler(0,0,7);leftElbow.localRotation=Quaternion.Euler(-9-Mathf.Abs(swing)*.3f,0,0);rightElbow.localRotation=Quaternion.Euler(ability>0?-65:-9-Mathf.Abs(swing)*.3f,0,0);}
