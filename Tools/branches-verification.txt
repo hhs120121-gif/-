@@ -1,0 +1,16 @@
+PASS 15 alternate-path checks
+A bypass progresses without key
+A key recoverable after bypass
+B wrong sample poisons and starts fight
+B failed puzzle does not softlock progression
+C combat key and single record
+ordinary party defeat
+retry restores checkpoint without counting defeat
+actual final defeat routes to D
+remote unlock cannot consume or award items
+nearby maintenance stash opens atomically
+maintenance reward cannot repeat
+escape objective starts with rubble
+escape objective advances to gas
+escape objective advances to lock
+completed objective directs to exit

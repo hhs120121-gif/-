@@ -1,0 +1,66 @@
+PASS 65 rules checks
+stack limit 20 and acquisition order
+failed removal is atomic
+empty stacks removed
+reject unknown and nonpositive items
+twenty slots capacity
+full inventory keeps source transaction intact
+craft reserve slot 0
+craft reserve slot 1
+craft reserve slot 2
+craft reserve slot 3
+craft reserve slot 4
+reservation does not consume inventory
+five types eight units craft transaction
+craft cannot commit twice
+wrong placement 0
+withdrawal 0
+wrong placement 1
+withdrawal 1
+wrong placement 2
+withdrawal 2
+wrong placement 3
+withdrawal 3
+wrong placement 4
+withdrawal 4
+wrong placement 5
+withdrawal 5
+wrong placement 6
+withdrawal 6
+wrong placement 7
+withdrawal 7
+wrong placement 8
+withdrawal 8
+wrong placement 9
+withdrawal 9
+withdraw Easter egg counts actual returns only
+unique peaceful event counts once
+avoidance excluded from ratio
+exact 50 percent boundary
+below 50 percent
+zero denominator is not humane completion
+unique key pieces
+ending A
+ending C missing piece
+offer takes priority B
+final defeat D
+final boss included 2/5 to 3/6
+Daniel attack +30%
+subdue never damages HP
+30 percent additional effect
+Daeun first tool +50%, second tool pending
+enemy acts after second tool
+victory after first tool stops second and enemy
+James next turn attack bonus and first insight
+repeat analysis cannot farm same phase
+James persuasion extra chance 55 percent
+machine cannot be persuaded
+boss continuous gauges and three phases
+boss nonlethal completion
+Daeun antidote before second action
+atomic save writes
+save roundtrip
+second save rotates backup
+corrupt primary recovers valid backup
+tutorial cannot save
+invalid position rejected

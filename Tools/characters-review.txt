@@ -1,0 +1,1 @@
+PASS: 24 skinned parts across three heroes; matching bones/bindposes; normalized weights; supported shader. Captured front, three-quarter, rear, and walking poses. Visual quality remains a separate review.
